@@ -1,0 +1,286 @@
+{
+    "info": {
+        "name": "sw_épreuvefinale_NoDA",
+        "description": "Collection Postman — Épreuve finale Services Web Hiver 2026\nRemplacez {{base_url}} et {{cle_api}} par vos valeurs.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:3000",
+            "type": "string"
+        },
+        {
+            "key": "cle_api",
+            "value": "cle-api-biblio-centrale-0001",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "Bibliothèques",
+            "item": [
+                {
+                    "name": "POST - Créer une bibliothèque",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/bibliotheques",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"nom\": \"Ma Bibliothèque Test\",\n  \"courriel\": \"test@biblio.ca\",\n  \"mot_de_passe\": \"motdepasse123\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "POST - Récupérer la clé API",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/bibliotheques/cle-api",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"courriel\": \"test@biblio.ca\",\n  \"mot_de_passe\": \"motdepasse123\",\n  \"regenerer\": false\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "POST - Régénérer la clé API",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/bibliotheques/cle-api",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"courriel\": \"test@biblio.ca\",\n  \"mot_de_passe\": \"motdepasse123\",\n  \"regenerer\": true\n}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Livres",
+            "item": [
+                {
+                    "name": "GET - Lister les livres disponibles",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "x-api-key",
+                                "value": "{{cle_api}}"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/livres"
+                    }
+                },
+                {
+                    "name": "GET - Lister tous les livres (tous=true)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "x-api-key",
+                                "value": "{{cle_api}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/livres?tous=true",
+                            "query": [
+                                {
+                                    "key": "tous",
+                                    "value": "true"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "GET - Détail d'un livre",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "x-api-key",
+                                "value": "{{cle_api}}"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/livres/1"
+                    }
+                },
+                {
+                    "name": "POST - Ajouter un livre",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{cle_api}}"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/livres",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"titre\": \"Nouveau Livre\",\n  \"auteur\": \"Auteur Test\",\n  \"isbn\": \"978-0-000000-00-0\",\n  \"description\": \"Une description du livre.\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "PUT - Modifier un livre",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{cle_api}}"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/livres/1",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"titre\": \"Titre Modifié\",\n  \"auteur\": \"Auteur Modifié\",\n  \"isbn\": \"978-0-000000-00-1\",\n  \"description\": \"Description mise à jour.\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "PATCH - Changer le statut d'un livre",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{cle_api}}"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/livres/1/statut",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"statut\": \"emprunte\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "DELETE - Supprimer un livre",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "x-api-key",
+                                "value": "{{cle_api}}"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/livres/5"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Prêts",
+            "item": [
+                {
+                    "name": "POST - Ajouter un prêt",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{cle_api}}"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/livres/1/prets",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"nom_emprunteur\": \"Marie Tremblay\",\n  \"date_debut\": \"2026-05-01\",\n  \"date_retour_prevue\": \"2026-05-15\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "PUT - Modifier un prêt",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{cle_api}}"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/prets/1",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"nom_emprunteur\": \"Jean Dupont\",\n  \"date_debut\": \"2026-05-01\",\n  \"date_retour_prevue\": \"2026-05-20\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "PATCH - Changer le statut d'un prêt",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{cle_api}}"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/prets/1/statut",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"statut\": \"termine\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "DELETE - Supprimer un prêt",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "x-api-key",
+                                "value": "{{cle_api}}"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/prets/1"
+                    }
+                }
+            ]
+        }
+    ]
+}

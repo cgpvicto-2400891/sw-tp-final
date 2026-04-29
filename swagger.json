@@ -1,0 +1,688 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Gestion de Bibliothèque",
+        "version": "1.0.0",
+        "description": "Service Web REST pour la gestion de prêts de livres dans les bibliothèques.\n            \n## Authentification\nLa majorité des routes nécessite une clé API transmise dans l'en-tête HTTP **Authorization** sous le format :\n```\nAuthorization: cle_api VOTRE_CLE_API\n```\nLes routes de création de compte et de récupération de clé sont publiques (sans authentification).\n\n## Structure des réponses\nToutes les réponses sont au format JSON avec les champs :\n- `succes` (boolean) : indique le succès de l'opération\n- `message` (string) : message descriptif\n- `donnees` (object | array) : données retournées le cas échéant",
+        "contact": {
+            "name": "Support technique",
+            "email": "support@bibliotheque-api.ca"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000",
+            "description": "Serveur actif"
+        }
+    ],
+    "paths": {
+        "/api/bibliotheques": {
+            "post": {
+                "summary": "Créer une nouvelle bibliothèque",
+                "tags": [
+                    "Bibliothèques"
+                ],
+                "description": "Crée une bibliothèque et retourne une clé API. Aucune authentification requise.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "nom",
+                                    "courriel",
+                                    "mot_de_passe"
+                                ],
+                                "properties": {
+                                    "nom": {
+                                        "type": "string",
+                                        "example": "Ma bibliothèque"
+                                    },
+                                    "courriel": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "contact@mabiblio.ca"
+                                    },
+                                    "mot_de_passe": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "MonMotDePasse123"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Bibliothèque créée avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReponseBibliotheque"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref: '#/components/responses/BadRequest'": ""
+                    },
+                    "409": {
+                        "description": "Courriel déjà utilisé"
+                    },
+                    "500": {
+                        "$ref: '#/components/responses/ServerError'": ""
+                    }
+                }
+            }
+        },
+        "/api/bibliotheques/cle-api": {
+            "post": {
+                "summary": "Récupérer ou régénérer la clé API",
+                "tags": [
+                    "Bibliothèques"
+                ],
+                "description": "Retourne la clé API existante. Si le paramètre regenerer est true, génère une nouvelle clé.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "courriel",
+                                    "mot_de_passe"
+                                ],
+                                "properties": {
+                                    "courriel": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "mot_de_passe": {
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "regenerer": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Si true, génère une nouvelle clé API"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Clé API retournée ou régénérée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReponseBibliotheque"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref: '#/components/responses/BadRequest'": ""
+                    },
+                    "401": {
+                        "$ref: '#/components/responses/Unauthorized'": ""
+                    },
+                    "404": {
+                        "$ref: '#/components/responses/NotFound'": ""
+                    },
+                    "500": {
+                        "$ref: '#/components/responses/ServerError'": ""
+                    }
+                }
+            }
+        },
+        "/api/livres": {
+            "get": {
+                "summary": "Lister les livres de la bibliothèque",
+                "tags": [
+                    "Livres"
+                ],
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "tous",
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        },
+                        "description": "Si true, retourne tous les livres incluant les empruntes"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des livres",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "succes": {
+                                            "type": "boolean"
+                                        },
+                                        "nombre": {
+                                            "type": "integer"
+                                        },
+                                        "donnees": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Livre"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref: '#/components/responses/Unauthorized'": ""
+                    },
+                    "403": {
+                        "$ref: '#/components/responses/Forbidden'": ""
+                    },
+                    "500": {
+                        "$ref: '#/components/responses/ServerError'": ""
+                    }
+                }
+            },
+            "post": {
+                "summary": "Ajouter un livre",
+                "tags": [
+                    "Livres"
+                ],
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LivreInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Livre ajouté avec succès"
+                    },
+                    "400": {
+                        "$ref: '#/components/responses/BadRequest'": ""
+                    },
+                    "401": {
+                        "$ref: '#/components/responses/Unauthorized'": ""
+                    },
+                    "500": {
+                        "$ref: '#/components/responses/ServerError'": ""
+                    }
+                }
+            }
+        },
+        "/api/livres/{id}": {
+            "get": {
+                "summary": "Afficher le détail d'un livre",
+                "tags": [
+                    "Livres"
+                ],
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "Identifiant du livre"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Détail du livre avec ses prêts",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "succes": {
+                                            "type": "boolean"
+                                        },
+                                        "donnees": {
+                                            "$ref": "#/components/schemas/LivreDetail"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref: '#/components/responses/Unauthorized'": ""
+                    },
+                    "404": {
+                        "$ref: '#/components/responses/NotFound'": ""
+                    },
+                    "500": {
+                        "$ref: '#/components/responses/ServerError'": ""
+                    }
+                }
+            },
+            "put": {
+                "summary": "Modifier un livre",
+                "tags": [
+                    "Livres"
+                ],
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LivreInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Livre modifié avec succès"
+                    },
+                    "400": {
+                        "$ref: '#/components/responses/BadRequest'": ""
+                    },
+                    "404": {
+                        "$ref: '#/components/responses/NotFound'": ""
+                    },
+                    "500": {
+                        "$ref: '#/components/responses/ServerError'": ""
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Supprimer un livre",
+                "tags": [
+                    "Livres"
+                ],
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Livre supprimé avec succès"
+                    },
+                    "404": {
+                        "$ref: '#/components/responses/NotFound'": ""
+                    },
+                    "500": {
+                        "$ref: '#/components/responses/ServerError'": ""
+                    }
+                }
+            }
+        },
+        "/api/livres/{id}/statut": {
+            "patch": {
+                "summary": "Modifier le statut d'un livre",
+                "tags": [
+                    "Livres"
+                ],
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "statut"
+                                ],
+                                "properties": {
+                                    "statut": {
+                                        "type": "string",
+                                        "enum": [
+                                            "disponible",
+                                            "emprunte"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Statut mis à jour"
+                    },
+                    "400": {
+                        "$ref: '#/components/responses/BadRequest'": ""
+                    },
+                    "404": {
+                        "$ref: '#/components/responses/NotFound'": ""
+                    },
+                    "500": {
+                        "$ref: '#/components/responses/ServerError'": ""
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "Authorization",
+                "description": "Entrez votre clé au format : cle_api VOTRE_CLE_API"
+            }
+        },
+        "schemas": {
+            "Livre": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "titre": {
+                        "type": "string",
+                        "example": "Le Petit Prince"
+                    },
+                    "auteur": {
+                        "type": "string",
+                        "example": "Antoine de Saint-Exupéry"
+                    },
+                    "isbn": {
+                        "type": "string",
+                        "example": "978-2-07-040850-4"
+                    },
+                    "statut": {
+                        "type": "string",
+                        "enum": [
+                            "disponible",
+                            "emprunte"
+                        ]
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "date_ajout": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "LivreDetail": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Livre"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "prets": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/Pret"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "LivreInput": {
+                "type": "object",
+                "required": [
+                    "titre",
+                    "auteur",
+                    "isbn"
+                ],
+                "properties": {
+                    "titre": {
+                        "type": "string",
+                        "example": "Les Misérables"
+                    },
+                    "auteur": {
+                        "type": "string",
+                        "example": "Victor Hugo"
+                    },
+                    "isbn": {
+                        "type": "string",
+                        "example": "978-2-07-040878-8"
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            },
+            "Pret": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nom_emprunteur": {
+                        "type": "string",
+                        "example": "Marie Tremblay"
+                    },
+                    "date_debut": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-01-10"
+                    },
+                    "date_retour_prevue": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-01-31"
+                    },
+                    "date_retour_reel": {
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    },
+                    "statut": {
+                        "type": "string",
+                        "enum": [
+                            "en_cours",
+                            "termine"
+                        ]
+                    },
+                    "en_cours": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                }
+            },
+            "PretInput": {
+                "type": "object",
+                "required": [
+                    "nom_emprunteur",
+                    "date_debut",
+                    "date_retour_prevue"
+                ],
+                "properties": {
+                    "nom_emprunteur": {
+                        "type": "string",
+                        "example": "Jean Dupont"
+                    },
+                    "date_debut": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-02-01"
+                    },
+                    "date_retour_prevue": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-02-15"
+                    }
+                }
+            },
+            "ReponseBibliotheque": {
+                "type": "object",
+                "properties": {
+                    "succes": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "donnees": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer"
+                            },
+                            "nom": {
+                                "type": "string"
+                            },
+                            "courriel": {
+                                "type": "string"
+                            },
+                            "cle_api": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "ReponseLivreDetail": {
+                "type": "object",
+                "properties": {
+                    "succes": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "donnees": {
+                        "$ref": "#/components/schemas/LivreDetail"
+                    }
+                }
+            },
+            "Erreur": {
+                "type": "object",
+                "properties": {
+                    "succes": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Description de l'erreur."
+                    }
+                }
+            }
+        },
+        "responses": {
+            "BadRequest": {
+                "description": "Requête invalide — paramètre manquant ou mal formaté",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Erreur"
+                        }
+                    }
+                }
+            },
+            "Unauthorized": {
+                "description": "Clé API manquante",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Erreur"
+                        }
+                    }
+                }
+            },
+            "Forbidden": {
+                "description": "Clé API invalide ou accès refusé",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Erreur"
+                        }
+                    }
+                }
+            },
+            "NotFound": {
+                "description": "Ressource introuvable",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Erreur"
+                        }
+                    }
+                }
+            },
+            "ServerError": {
+                "description": "Erreur interne du serveur",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Erreur"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
