@@ -3,11 +3,7 @@
     "info": {
         "title": "API Gestion de Bibliothèque",
         "version": "1.0.0",
-        "description": "Service Web REST pour la gestion de prêts de livres dans les bibliothèques.\n            \n## Authentification\nLa majorité des routes nécessite une clé API transmise dans l'en-tête HTTP **Authorization** sous le format :\n```\nAuthorization: cle_api VOTRE_CLE_API\n```\nLes routes de création de compte et de récupération de clé sont publiques (sans authentification).\n\n## Structure des réponses\nToutes les réponses sont au format JSON avec les champs :\n- `succes` (boolean) : indique le succès de l'opération\n- `message` (string) : message descriptif\n- `donnees` (object | array) : données retournées le cas échéant",
-        "contact": {
-            "name": "Support technique",
-            "email": "support@bibliotheque-api.ca"
-        }
+        "description": "Service Web REST pour la gestion de prêts de livres dans les bibliothèques.\n            \n## Authentification\nLa majorité des routes nécessite une clé API transmise dans l'en-tête HTTP **Authorization** sous le format :\n```\nAuthorization: cle_api VOTRE_CLE_API\n```\nLes routes de création de compte et de récupération de clé sont publiques (sans authentification).\n\n## Structure des réponses\nToutes les réponses sont au format JSON avec les champs :\n- `succes` (boolean) : indique le succès de l'opération\n- `message` (string) : message descriptif\n- `donnees` (object | array) : données retournées le cas échéant"
     },
     "servers": [
         {
