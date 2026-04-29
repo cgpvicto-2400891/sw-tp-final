@@ -45,7 +45,7 @@ const swaggerSpec = JSON.parse(fs.readFileSync(path.join(__dirname, 'swagger.jso
 const serverUrl = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
 swaggerSpec.servers = [{ url: serverUrl, description: 'Serveur actif' }];
 
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { swaggerOptions: { defaultModelsExpandDepth: -1 } }));
 app.get('/api/docs.json', (req, res) => res.json(swaggerSpec));
 
 // Routes API
