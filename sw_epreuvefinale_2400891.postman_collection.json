@@ -1,18 +1,18 @@
 {
     "info": {
         "name": "sw_épreuvefinale_NoDA",
-        "description": "Collection Postman — Épreuve finale Services Web Hiver 2026\nRemplacez {{base_url}} et {{cle_api}} par vos valeurs.",
+        "description": "Collection Postman — Épreuve finale Services Web Hiver 2026\nRemplacez {{cle_api}} par votre clé API.",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "variable": [
         {
             "key": "base_url",
-            "value": "http://localhost:3000",
+            "value": "https://sw-tp-final.onrender.com",
             "type": "string"
         },
         {
             "key": "cle_api",
-            "value": "cle-api-biblio-centrale-0001",
+            "value": "VOTRE_CLE_API_ICI",
             "type": "string"
         }
     ],
@@ -82,8 +82,8 @@
                         "method": "GET",
                         "header": [
                             {
-                                "key": "x-api-key",
-                                "value": "{{cle_api}}"
+                                "key": "Authorization",
+                                "value": "cle_api {{cle_api}}"
                             }
                         ],
                         "url": "{{base_url}}/api/livres"
@@ -95,8 +95,8 @@
                         "method": "GET",
                         "header": [
                             {
-                                "key": "x-api-key",
-                                "value": "{{cle_api}}"
+                                "key": "Authorization",
+                                "value": "cle_api {{cle_api}}"
                             }
                         ],
                         "url": {
@@ -116,8 +116,8 @@
                         "method": "GET",
                         "header": [
                             {
-                                "key": "x-api-key",
-                                "value": "{{cle_api}}"
+                                "key": "Authorization",
+                                "value": "cle_api {{cle_api}}"
                             }
                         ],
                         "url": "{{base_url}}/api/livres/1"
@@ -133,8 +133,8 @@
                                 "value": "application/json"
                             },
                             {
-                                "key": "x-api-key",
-                                "value": "{{cle_api}}"
+                                "key": "Authorization",
+                                "value": "cle_api {{cle_api}}"
                             }
                         ],
                         "url": "{{base_url}}/api/livres",
@@ -154,8 +154,8 @@
                                 "value": "application/json"
                             },
                             {
-                                "key": "x-api-key",
-                                "value": "{{cle_api}}"
+                                "key": "Authorization",
+                                "value": "cle_api {{cle_api}}"
                             }
                         ],
                         "url": "{{base_url}}/api/livres/1",
@@ -175,8 +175,8 @@
                                 "value": "application/json"
                             },
                             {
-                                "key": "x-api-key",
-                                "value": "{{cle_api}}"
+                                "key": "Authorization",
+                                "value": "cle_api {{cle_api}}"
                             }
                         ],
                         "url": "{{base_url}}/api/livres/1/statut",
@@ -192,8 +192,8 @@
                         "method": "DELETE",
                         "header": [
                             {
-                                "key": "x-api-key",
-                                "value": "{{cle_api}}"
+                                "key": "Authorization",
+                                "value": "cle_api {{cle_api}}"
                             }
                         ],
                         "url": "{{base_url}}/api/livres/5"
@@ -214,8 +214,8 @@
                                 "value": "application/json"
                             },
                             {
-                                "key": "x-api-key",
-                                "value": "{{cle_api}}"
+                                "key": "Authorization",
+                                "value": "cle_api {{cle_api}}"
                             }
                         ],
                         "url": "{{base_url}}/api/livres/1/prets",
@@ -235,8 +235,8 @@
                                 "value": "application/json"
                             },
                             {
-                                "key": "x-api-key",
-                                "value": "{{cle_api}}"
+                                "key": "Authorization",
+                                "value": "cle_api {{cle_api}}"
                             }
                         ],
                         "url": "{{base_url}}/api/prets/1",
@@ -256,8 +256,8 @@
                                 "value": "application/json"
                             },
                             {
-                                "key": "x-api-key",
-                                "value": "{{cle_api}}"
+                                "key": "Authorization",
+                                "value": "cle_api {{cle_api}}"
                             }
                         ],
                         "url": "{{base_url}}/api/prets/1/statut",
@@ -273,8 +273,8 @@
                         "method": "DELETE",
                         "header": [
                             {
-                                "key": "x-api-key",
-                                "value": "{{cle_api}}"
+                                "key": "Authorization",
+                                "value": "cle_api {{cle_api}}"
                             }
                         ],
                         "url": "{{base_url}}/api/prets/1"
