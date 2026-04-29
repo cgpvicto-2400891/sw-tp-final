@@ -1,7 +1,7 @@
 {
     "info": {
-        "name": "sw_épreuvefinale_NoDA",
-        "description": "Collection Postman — Épreuve finale Services Web Hiver 2026\nRemplacez {{cle_api}} par votre clé API.",
+        "name": "sw_épreuvefinale_2400891",
+        "description": "Collection Postman PRO — Épreuve finale Services Web Hiver 2026\n\n**IMPORTANT** :\n1. Exécutez d'abord la requête **« Étape 1 : Créer une bibliothèque (Générer Clé API) »**.\n2. La clé API générée sera **automatiquement sauvegardée** dans les variables de la collection.\n3. Vous pourrez ensuite exécuter toutes les autres requêtes sans rien configurer manuellement.",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "variable": [
@@ -12,16 +12,41 @@
         },
         {
             "key": "cle_api",
-            "value": "VOTRE_CLE_API_ICI",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "livre_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "pret_id",
+            "value": "",
             "type": "string"
         }
     ],
     "item": [
         {
-            "name": "Bibliothèques",
+            "name": "1. AUTHENTIFICATION",
             "item": [
                 {
-                    "name": "POST - Créer une bibliothèque",
+                    "name": "Étape 1 : Créer une bibliothèque (Générer Clé API)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "const response = pm.response.json();",
+                                    "if (response.succes && response.donnees.cle_api) {",
+                                    "    pm.collectionVariables.set(\"cle_api\", response.donnees.cle_api);",
+                                    "    console.log(\"Clé API enregistrée automatiquement : \", response.donnees.cle_api);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "POST",
                         "header": [
@@ -33,12 +58,26 @@
                         "url": "{{base_url}}/api/bibliotheques",
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"nom\": \"Ma Bibliothèque Test\",\n  \"courriel\": \"test@biblio.ca\",\n  \"mot_de_passe\": \"motdepasse123\"\n}"
+                            "raw": "{\n  \"nom\": \"Bibliothèque DA 2400891\",\n  \"courriel\": \"admin_{{$timestamp}}@biblio.ca\",\n  \"mot_de_passe\": \"P@ssword123\"\n}"
                         }
                     }
                 },
                 {
-                    "name": "POST - Récupérer la clé API",
+                    "name": "Étape 2 (Facultatif) : Récupérer / Régénérer Clé API",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "const response = pm.response.json();",
+                                    "if (response.succes && response.donnees.cle_api) {",
+                                    "    pm.collectionVariables.set(\"cle_api\", response.donnees.cle_api);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "POST",
                         "header": [
@@ -50,34 +89,52 @@
                         "url": "{{base_url}}/api/bibliotheques/cle-api",
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"courriel\": \"test@biblio.ca\",\n  \"mot_de_passe\": \"motdepasse123\",\n  \"regenerer\": false\n}"
-                        }
-                    }
-                },
-                {
-                    "name": "POST - Régénérer la clé API",
-                    "request": {
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application/json"
-                            }
-                        ],
-                        "url": "{{base_url}}/api/bibliotheques/cle-api",
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n  \"courriel\": \"test@biblio.ca\",\n  \"mot_de_passe\": \"motdepasse123\",\n  \"regenerer\": true\n}"
+                            "raw": "{\n  \"courriel\": \"admin@biblio.ca\",\n  \"mot_de_passe\": \"P@ssword123\",\n  \"regenerer\": false\n}"
                         }
                     }
                 }
             ]
         },
         {
-            "name": "Livres",
+            "name": "2. LIVRES",
             "item": [
                 {
-                    "name": "GET - Lister les livres disponibles",
+                    "name": "Ajouter un livre",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "const response = pm.response.json();",
+                                    "if (response.succes) {",
+                                    "    pm.collectionVariables.set(\"livre_id\", 1); // Raccourci temporaire (l'API ne renvoie pas l'ID en POST)",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "cle_api {{cle_api}}"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/livres",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"titre\": \"L'Alchimiste {{$randomInt}}\",\n  \"auteur\": \"Paulo Coelho\",\n  \"isbn\": \"978-2-0814-1181-{{$randomInt}}\",\n  \"description\": \"Un roman initiatique sur la poursuite de ses rêves.\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Lister les livres (Disponibles uniquement)",
                     "request": {
                         "method": "GET",
                         "header": [
@@ -90,7 +147,7 @@
                     }
                 },
                 {
-                    "name": "GET - Lister tous les livres (tous=true)",
+                    "name": "Lister TOUS les livres (tous=true)",
                     "request": {
                         "method": "GET",
                         "header": [
@@ -111,7 +168,7 @@
                     }
                 },
                 {
-                    "name": "GET - Détail d'un livre",
+                    "name": "Détail d'un livre",
                     "request": {
                         "method": "GET",
                         "header": [
@@ -124,28 +181,7 @@
                     }
                 },
                 {
-                    "name": "POST - Ajouter un livre",
-                    "request": {
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "cle_api {{cle_api}}"
-                            }
-                        ],
-                        "url": "{{base_url}}/api/livres",
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n  \"titre\": \"Nouveau Livre\",\n  \"auteur\": \"Auteur Test\",\n  \"isbn\": \"978-0-000000-00-0\",\n  \"description\": \"Une description du livre.\"\n}"
-                        }
-                    }
-                },
-                {
-                    "name": "PUT - Modifier un livre",
+                    "name": "Modifier un livre",
                     "request": {
                         "method": "PUT",
                         "header": [
@@ -161,12 +197,12 @@
                         "url": "{{base_url}}/api/livres/1",
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"titre\": \"Titre Modifié\",\n  \"auteur\": \"Auteur Modifié\",\n  \"isbn\": \"978-0-000000-00-1\",\n  \"description\": \"Description mise à jour.\"\n}"
+                            "raw": "{\n  \"titre\": \"L'Alchimiste (Édition Illustrée)\",\n  \"auteur\": \"Paulo Coelho\",\n  \"isbn\": \"978-2-0814-1181-0\",\n  \"description\": \"Version illustrée mise à jour.\"\n}"
                         }
                     }
                 },
                 {
-                    "name": "PATCH - Changer le statut d'un livre",
+                    "name": "Modifier statut du livre",
                     "request": {
                         "method": "PATCH",
                         "header": [
@@ -187,7 +223,7 @@
                     }
                 },
                 {
-                    "name": "DELETE - Supprimer un livre",
+                    "name": "Supprimer un livre",
                     "request": {
                         "method": "DELETE",
                         "header": [
@@ -196,16 +232,30 @@
                                 "value": "cle_api {{cle_api}}"
                             }
                         ],
-                        "url": "{{base_url}}/api/livres/5"
+                        "url": "{{base_url}}/api/livres/999"
                     }
                 }
             ]
         },
         {
-            "name": "Prêts",
+            "name": "3. PRÊTS",
             "item": [
                 {
-                    "name": "POST - Ajouter un prêt",
+                    "name": "Ajouter un prêt",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "const response = pm.response.json();",
+                                    "if (response.succes) {",
+                                    "    pm.collectionVariables.set(\"pret_id\", 1);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "POST",
                         "header": [
@@ -221,12 +271,12 @@
                         "url": "{{base_url}}/api/livres/1/prets",
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"nom_emprunteur\": \"Marie Tremblay\",\n  \"date_debut\": \"2026-05-01\",\n  \"date_retour_prevue\": \"2026-05-15\"\n}"
+                            "raw": "{\n  \"nom_emprunteur\": \"Alexandre Dupont\",\n  \"date_debut\": \"2026-05-01\",\n  \"date_retour_prevue\": \"2026-05-15\"\n}"
                         }
                     }
                 },
                 {
-                    "name": "PUT - Modifier un prêt",
+                    "name": "Modifier un prêt",
                     "request": {
                         "method": "PUT",
                         "header": [
@@ -242,12 +292,12 @@
                         "url": "{{base_url}}/api/prets/1",
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"nom_emprunteur\": \"Jean Dupont\",\n  \"date_debut\": \"2026-05-01\",\n  \"date_retour_prevue\": \"2026-05-20\"\n}"
+                            "raw": "{\n  \"nom_emprunteur\": \"Alexandre Dupont\",\n  \"date_debut\": \"2026-05-01\",\n  \"date_retour_prevue\": \"2026-05-30\"\n}"
                         }
                     }
                 },
                 {
-                    "name": "PATCH - Changer le statut d'un prêt",
+                    "name": "Terminer un prêt (Changer statut)",
                     "request": {
                         "method": "PATCH",
                         "header": [
@@ -268,7 +318,7 @@
                     }
                 },
                 {
-                    "name": "DELETE - Supprimer un prêt",
+                    "name": "Supprimer un prêt",
                     "request": {
                         "method": "DELETE",
                         "header": [
@@ -277,7 +327,7 @@
                                 "value": "cle_api {{cle_api}}"
                             }
                         ],
-                        "url": "{{base_url}}/api/prets/1"
+                        "url": "{{base_url}}/api/prets/999"
                     }
                 }
             ]
