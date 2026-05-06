@@ -9,6 +9,7 @@ import swaggerUi from 'swagger-ui-express';
 
 import bibliothequeRoutes from './src/routes/bibliothequeRoutes.js';
 import livreRoutes from './src/routes/livreRoutes.js';
+import pretRoutes from './src/routes/pretRoutes.js';
 import pretController from './src/controllers/pretController.js';
 import { authentifierCleApi } from './src/middleware/auth.js';
 
@@ -51,12 +52,10 @@ app.get('/api/docs.json', (req, res) => res.json(swaggerSpec));
 // Routes API
 app.use('/api/bibliotheques', bibliothequeRoutes);
 app.use('/api/livres', livreRoutes);
+app.use('/api/prets', pretRoutes);
 
-// Routes des prêts
+// Route de création de prêt (imbriquée sous livres)
 app.post('/api/livres/:livreId/prets', authentifierCleApi, pretController.ajouterPret);
-app.put('/api/prets/:pretId', authentifierCleApi, pretController.modifierPret);
-app.patch('/api/prets/:pretId/statut', authentifierCleApi, pretController.changerStatutPret);
-app.delete('/api/prets/:pretId', authentifierCleApi, pretController.supprimerPret);
 
 // Route de base
 app.get('/', (req, res) => {
